@@ -1,5 +1,6 @@
 package com.example.spring_security.service;
 
+import com.example.spring_security.model.UserPrincipal;
 import com.example.spring_security.model.Users;
 import com.example.spring_security.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +21,9 @@ public class MyUserDetailsService implements UserDetailsService{
         Users user = userRepository.findByUsername(username);
         if (user == null) {
             System.out.println("User not found");
-            throw new UsernameNotFoundException("User not found with username: " + username);
+            throw new UsernameNotFoundException("User not found with username");
         }
         // Create and return a UserDetails object based on the user data
-        return null;
+        return new UserPrincipal(user);
     }
 }
