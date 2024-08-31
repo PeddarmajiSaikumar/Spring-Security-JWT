@@ -1,10 +1,11 @@
 package com.example.spring_security.model;
 
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import lombok.ToString;
 
 @Entity
+@ToString
 public class Users {
     @Id
     private int id;

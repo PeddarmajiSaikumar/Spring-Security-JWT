@@ -9,9 +9,12 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -27,18 +30,21 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     @Autowired
-    private UserDetailsService  userDetailsService;
-    
+    private UserDetailsService userDetailsService;
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                 .csrf(Customizer->Customizer.disable())
-                 .authorizeHttpRequests(request->request.anyRequest().authenticated())
-                 .formLogin(Customizer.withDefaults())//form login for browser
-                 .httpBasic(Customizer.withDefaults()) //used to get the data from postman
-                 .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                 .build();
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(request -> {
+                    request.requestMatchers("register", "login").permitAll();
+                    request.anyRequest().authenticated();
+                })
+                //.formLogin(Customizer.withDefaults())//form login for browser
+                .httpBasic(Customizer.withDefaults()) //used to get the data from postman
+//                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .build();
     }
 
 //    @Bean
@@ -61,25 +67,32 @@ public class SecurityConfig {
 //    }
 
 
-//    @Bean
+    //    @Bean
 //    public PasswordEncoder passwordEncoder() {
 //        return NoOpPasswordEncoder.getInstance();  // Use NoOpPasswordEncoder
 //    }
-      @Bean
-      public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();  // Use BCrypt for password hashing
-      }
-
-
     @Bean
-    public AuthenticationManager authenticationManager() throws Exception{
-        return new ProviderManager(authenticationProvider());
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();  // Use BCrypt for password hashing
     }
 
-    public AuthenticationProvider  authenticationProvider(){
-        DaoAuthenticationProvider provider=new DaoAuthenticationProvider();
-        provider.setPasswordEncoder(new BCryptPasswordEncoder(12));
+
+//    @Bean
+//    public AuthenticationManager authenticationManager() throws Exception{
+//        return new ProviderManager(authenticationProvider());
+//    }
+
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setPasswordEncoder(passwordEncoder());
         provider.setUserDetailsService(userDetailsService);
         return provider;
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager() throws Exception {
+        return new ProviderManager(authenticationProvider());
+
     }
 }
