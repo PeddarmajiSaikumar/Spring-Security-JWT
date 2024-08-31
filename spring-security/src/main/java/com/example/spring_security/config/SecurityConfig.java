@@ -61,10 +61,15 @@ public class SecurityConfig {
 //    }
 
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return NoOpPasswordEncoder.getInstance();  // Use NoOpPasswordEncoder
-    }
+//    @Bean
+//    public PasswordEncoder passwordEncoder() {
+//        return NoOpPasswordEncoder.getInstance();  // Use NoOpPasswordEncoder
+//    }
+      @Bean
+      public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();  // Use BCrypt for password hashing
+      }
+
 
     @Bean
     public AuthenticationManager authenticationManager() throws Exception{
