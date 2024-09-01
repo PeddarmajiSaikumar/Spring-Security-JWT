@@ -26,15 +26,9 @@ public class UserController {
         return userService.register(user);
     }
 
-//    @GetMapping("/get")
-//    public List<Users> get(){
-//        return userRepository.findAll();
-//    }
-
     @PostMapping("/login")
     public String login(@RequestBody Users user){
-        //System.out.println(user);
-        return "success";
+        return userService.login(user);
     }
 }
 

@@ -38,7 +38,7 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> {
-                    request.requestMatchers("register", "login").permitAll();
+                    request.requestMatchers("/register", "/login").permitAll();
                     request.anyRequest().authenticated();
                 })
                 //.formLogin(Customizer.withDefaults())//form login for browser
