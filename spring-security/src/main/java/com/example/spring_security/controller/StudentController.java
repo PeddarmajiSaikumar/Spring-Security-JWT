@@ -19,7 +19,6 @@ public class StudentController {
             new Student(3,"Suchitra",91)
     ));
 
-
     @GetMapping("/students")
     public List<Student> getAllStudents(){
         return students;
